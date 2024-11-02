@@ -1,0 +1,4 @@
+modules_controller:
+  resource: '../../src/Modules/*/Controller/*'
+  type: attribute
+  prefix: /api/v1
