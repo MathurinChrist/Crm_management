@@ -25,4 +25,17 @@ class TaskService
         return $task;
     }
 
+    public function deleteTask(Task &$task): void
+    {
+        $this->entityManager->remove($task);
+        $this->entityManager->flush();
+    }
+
+
+    public function updateTask(Task &$task): ?Task
+    {
+        $this->entityManager->flush();
+        return $task;
+    }
+
 }

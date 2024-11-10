@@ -3,20 +3,26 @@
 namespace App\Modules\Task\Entity;
 
 use App\Modules\Task\Repository\TaskRepository;
+use App\Modules\Task\Validator\checkTaskProperty;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
 {
+    //todo: back to this class to do some relations with others classes
+    const statusOptions = ['todo', 'achieve', 'ok_prod','current'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[checkTaskProperty]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[checkTaskProperty]
     private ?string $context = null;
 
     #[ORM\Column(length: 255)]
@@ -26,6 +32,7 @@ class Task
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Choice(choices: Task::statusOptions, message: 'The value chosen is not valid')]
     private ?string $status = null;
 
     public function getId(): ?int
@@ -92,4 +99,5 @@ class Task
 
         return $this;
     }
+
 }
