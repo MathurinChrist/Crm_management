@@ -21,7 +21,6 @@ class HelperAction  extends AbstractController
 
     public function jsonNotFound(string $message = "Not Found"): Response
     {
-        return $this->json(['result' => false, '$task' => null, 'errors' => ['Not found']], Response::HTTP_BAD_REQUEST);
+        return $this->json(['result' => false, 'errors' => ['Not found']], Response::HTTP_BAD_REQUEST);
     }
-
 }

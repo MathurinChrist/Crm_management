@@ -13,6 +13,16 @@ class ProjectService
         private readonly EntityManagerInterface $entityManager
     ){}
 
+    public function getProjectById(int $id): ?Project
+    {
+        return $this->projectRepository->find($id);
+    }
+
+    public function getProjectByName(?string $name): ?Project
+    {
+        return $this->projectRepository->findOneBy(['name' => $name]);
+    }
+
     public function getAllProjects(): array
     {
         return $this->projectRepository->findAll();
@@ -25,4 +35,15 @@ class ProjectService
         return $project;
     }
 
+    public function updateProject(Project &$project): void
+    {
+        $this->entityManager->persist($project);
+        $this->entityManager->flush();
+    }
+
+    public function deleteProject(Project &$project): void
+    {
+        $this->entityManager->remove($project);
+        $this->entityManager->flush();
+    }
 }
