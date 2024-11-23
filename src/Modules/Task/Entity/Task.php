@@ -2,8 +2,8 @@
 
 namespace App\Modules\Task\Entity;
 
+use App\Global\Validators\checkTaskProperty;
 use App\Modules\Task\Repository\TaskRepository;
-use App\Modules\Task\Validator\checkTaskProperty;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
