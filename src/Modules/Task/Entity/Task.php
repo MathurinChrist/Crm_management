@@ -26,7 +26,7 @@ class Task
     private ?string $context = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $project_to = null;
+    private ?string $project = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
@@ -64,14 +64,14 @@ class Task
         return $this;
     }
 
-    public function getProjectTo(): ?string
+    public function getProject(): ?string
     {
-        return $this->project_to;
+        return $this->project;
     }
 
-    public function setProjectTo(string $project_to): static
+    public function setProject(string $project): static
     {
-        $this->project_to = $project_to;
+        $this->project = $project;
 
         return $this;
     }

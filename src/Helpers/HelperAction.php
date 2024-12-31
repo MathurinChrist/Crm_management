@@ -37,6 +37,7 @@ class HelperAction  extends AbstractController
         }
 
         return $array;
+        // bette to use a casting
     }
 }
 
