@@ -1,0 +1,3 @@
+
+command to execute a simple migration
+php bin/console doctrine:migrations:execute --up 'DoctrineMigrations\Version20241124152742'

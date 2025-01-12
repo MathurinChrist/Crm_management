@@ -62,10 +62,9 @@ class TaskController extends AbstractController
 
     }
 
-    #[Route('/update/{id}', name: 'task_update',methods: ["PUT", "PATCH"])]
-    public function updateTask(Request $request, int $id): Response
+    #[Route('/update/{task}', name: 'task_update', methods: ["PUT", "PATCH"])]
+    public function updateTask(Request $request, ?Task $task): Response
     {
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
         if (null === $task) {
             return $this->helperAction->jsonNotFound();
         }
@@ -86,15 +85,13 @@ class TaskController extends AbstractController
         ], count($errors) ===0? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/delete/{id}', name: 'task_delete',methods: ["DELETE"])]
-    public function deleteTask(Request $request, int $id): Response
+    #[Route('/delete/{task}', name: 'task_delete', methods: ["DELETE"])]
+    public function deleteTask(Request $request, ?Task $task): Response
     {
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
         if (null === $task) {
             return $this->helperAction->jsonNotFound();
         }
         $this->taskService->deleteTask($task);
-
         return $this->json(['result' => true, 'error' => [] ], Response::HTTP_OK );
     }
 

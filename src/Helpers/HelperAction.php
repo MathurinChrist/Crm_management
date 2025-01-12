@@ -22,7 +22,7 @@ class HelperAction  extends AbstractController
 
     public function jsonNotFound(string $message = "Not Found"): Response
     {
-        return $this->json(['result' => false, 'errors' => ['Not found']], Response::HTTP_BAD_REQUEST);
+        return $this->json(['result' => false, 'errors' => ['Element not found']], Response::HTTP_NOT_FOUND);
     }
 
     public  function convertObject($obj): array
@@ -37,6 +37,7 @@ class HelperAction  extends AbstractController
         }
 
         return $array;
+        // bette to use a casting
     }
 }
 

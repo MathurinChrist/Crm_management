@@ -20,8 +20,7 @@ class Project
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $count_number_task = null;
-
+    private ?int $task = null;
     public function getId(): ?int
     {
         return $this->id;
@@ -37,9 +36,9 @@ class Project
         return $this->description;
     }
 
-    public function getCountNumberTask(): ?int
+    public function getTask(): ?int
     {
-        return $this->count_number_task;
+        return $this->task;
     }
 
     public function setName(string $name): void
@@ -52,8 +51,8 @@ class Project
         $this->description = $description;
     }
 
-    public function setCountNumberTask(?int $count_number_task): void
+    public function setTask(?int $task): void
     {
-        $this->count_number_task = $count_number_task;
+        $this->task = $task;
     }
 }
