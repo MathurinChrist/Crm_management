@@ -12,6 +12,7 @@ use DateTimeImmutable;
 #[AsCommand(
     name: 'app:generate-migration-template',
     description: 'generatin a template migration with this name class name VersionYYYYMMDDHHMMSS',
+    //command: php bin/console app:generate-migration-template
 )]
 class AppCommandGenerateMigrationTemplateCommand extends Command
 {

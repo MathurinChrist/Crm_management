@@ -4,7 +4,6 @@ namespace App\Modules\Task\Controller;
 
 use App\Helpers\HelperAction;
 use App\Modules\Task\Entity\Task;
-use App\Modules\Task\Repository\TaskRepository;
 use App\Modules\Task\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,43 +21,43 @@ class TaskController extends AbstractController
         private readonly TaskService $taskService,
         private readonly SerializerInterface $serializer,
         private readonly ValidatorInterface $validator,
-        private readonly  TaskRepository $taskRepository,
         private readonly HelperAction $helperAction
     ){}
 
     #[Route('/allTask', name: 'task_all',methods: ["GET"])]
     public function getAllTask(): Response
     {
-        //todo! we've to come back for roles
-        $allTask = $this->taskService->getAllTask();
-        $this->serializer->serialize($allTask, 'json');
-
         return $this->json([
-            'result' => true,
-            'total' => count($allTask),
-            'data' => $allTask,
-            'error' => []
-        ]);
+            'total' => count($this->taskService->getAllTask()),
+            'tasks' => $this->taskService->getAllTask(),
+        ], Response::HTTP_OK, [], ['groups' => ['task:read']]);
     }
 
     #[Route('/create', name: 'task_create',methods: ["POST"])]
     public function createTask(Request $request): Response
     {
         $result = true;
-        $task = $this->serializer->deserialize($request->getContent(),Task::class, 'json');
-        $errors = $this->validator->validate($task);
-        $errors =  $this->helperAction->handleErrors($errors);
-        if( count($errors) === 0 ){
-            $this->taskService->createTask($task);
-        } else {
-            $result = false;
-            $task =  null;
+        try {
+            $task = $this->serializer->deserialize($request->getContent(), Task::class, 'json',
+                ['groups' => ["task:read", "task:write", "task:create"]]
+            );
+            $errors = $this->validator->validate($task);
+            $errors = $this->helperAction->handleErrors($errors);
+            if (count($errors) === 0) {
+                $this->taskService->createTask($task);
+            } else {
+                $result = false;
+                $task = null;
+            }
+            return $this->json([
+                'result' => $result,
+                'data' => $task,
+                'error' => $errors
+            ], count($errors) === 0 ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST, [], ['groups' => ['task:read']]);
+
+        } catch (\Exception $e) {
+            return $this->helperAction->jsonNotFoundOrError($e->getMessage(), Response::HTTP_NOT_FOUND);
         }
-        return $this->json([
-            'result' => $result,
-            'data' => $task,
-            'error' => $errors
-        ], count($errors) ===0? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
     }
 
@@ -66,8 +65,9 @@ class TaskController extends AbstractController
     public function updateTask(Request $request, ?Task $task): Response
     {
         if (null === $task) {
-            return $this->helperAction->jsonNotFound();
+            return $this->helperAction->jsonNotFoundOrError();
         }
+
         $result = true;
         $this->serializer->deserialize($request->getContent(),Task::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $task]);
         $errors = $this->validator->validate($task);
@@ -89,7 +89,7 @@ class TaskController extends AbstractController
     public function deleteTask(Request $request, ?Task $task): Response
     {
         if (null === $task) {
-            return $this->helperAction->jsonNotFound();
+            return $this->helperAction->jsonNotFoundOrError();
         }
         $this->taskService->deleteTask($task);
         return $this->json(['result' => true, 'error' => [] ], Response::HTTP_OK );

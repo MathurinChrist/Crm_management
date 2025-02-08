@@ -20,9 +20,9 @@ class HelperAction  extends AbstractController
         return $errors;
     }
 
-    public function jsonNotFound(string $message = "Not Found"): Response
+    public function jsonNotFoundOrError(string $message = "Not Found", int $status = Response::HTTP_NOT_FOUND): Response
     {
-        return $this->json(['result' => false, 'errors' => ['Element not found']], Response::HTTP_NOT_FOUND);
+        return $this->json(['result' => false, 'errors' => [$message]], $status);
     }
 
     public  function convertObject($obj): array
