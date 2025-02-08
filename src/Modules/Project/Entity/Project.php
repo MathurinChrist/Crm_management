@@ -3,24 +3,41 @@
 namespace App\Modules\Project\Entity;
 
 use App\Modules\Project\Repository\ProjectRepository;
+use App\Modules\Task\Entity\Task;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 class Project
 {
+
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["task:read", "task:write", "project:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["task:read", "task:write", "project:read", "project:create", "project:update"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["task:read", "task:write", "project:read", "project:create", "project:update"])]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $task = null;
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project')]
+    #[Groups(["project:read", "project:create", "project:update"])]
+    private Collection $task;
+
+
+    public function __construct()
+    {
+        $this->task = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -36,7 +53,7 @@ class Project
         return $this->description;
     }
 
-    public function getTask(): ?int
+    public function getTask(): ?Collection
     {
         return $this->task;
     }
@@ -51,8 +68,23 @@ class Project
         $this->description = $description;
     }
 
-    public function setTask(?int $task): void
+    public function removeTask(Task $task): void
     {
-        $this->task = $task;
+        if ($this->task->contains($task)) {
+            $this->task->removeElement($task);
+            if ($task->getProject() === $this) {
+                $task->setProject(null);
+            }
+        }
+    }
+
+    public function addTask(Task $task): self
+    {
+        if (!$this->task->contains($task)) {
+            $this->task[] = $task;
+            $task->setProject($this);
+        }
+        return $this;
+
     }
 }

@@ -23,7 +23,7 @@ class ProjectService
         return $this->projectRepository->findOneBy(['name' => $name]);
     }
 
-    public function getAllProjects(): array
+    public function getAllProjects(): ?array
     {
         return $this->projectRepository->findAll();
     }

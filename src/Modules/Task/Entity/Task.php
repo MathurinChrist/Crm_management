@@ -3,14 +3,15 @@
 namespace App\Modules\Task\Entity;
 
 use App\Global\Validators\checkTaskProperty;
+use App\Modules\Project\Entity\Project;
 use App\Modules\Task\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
 {
-    //todo: back to this class to do some relations with others classes
     const statusOptions = ['todo', 'achieve', 'ok_prod','current'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,21 +20,27 @@ class Task
 
     #[ORM\Column(length: 255)]
     #[checkTaskProperty]
+    #[Groups(["task:read", "task:write", "task:create", "project:read"])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[checkTaskProperty]
+    #[Groups(["task:read", "task:write", "project:read"])]
     private ?string $context = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $project = null;
-
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["task:read", "task:write", "project:read"])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Choice(choices: Task::statusOptions, message: 'The value chosen is not valid')]
+    #[Groups(["task:read", "task:write", "project:read"])]
     private ?string $status = null;
+
+    #[ORM\ManyToOne(targetEntity: Project::class, cascade: ['persist'], inversedBy: 'task')]
+    #[ORM\JoinColumn(name: 'project_id', nullable: false, onDelete: 'cascade')]
+    #[Groups(["task:read", "task:write", "task:create"])]
+    private Project $project;
 
     public function getId(): ?int
     {
@@ -45,35 +52,19 @@ class Task
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function getProject(): ?Project
     {
-        $this->title = $title;
+        return $this->project;
+    }
 
-        return $this;
+    public function getStatus(): ?string
+    {
+        return $this->status;
     }
 
     public function getContext(): ?string
     {
         return $this->context;
-    }
-
-    public function setContext(string $context): static
-    {
-        $this->context = $context;
-
-        return $this;
-    }
-
-    public function getProject(): ?string
-    {
-        return $this->project;
-    }
-
-    public function setProject(string $project): static
-    {
-        $this->project = $project;
-
-        return $this;
     }
 
     public function getDescription(): ?string
@@ -88,16 +79,28 @@ class Task
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function setTitle(string $title): static
     {
-        return $this->status;
+        $this->title = $title;
+        return $this;
+    }
+
+    public function setContext(string $context): static
+    {
+        $this->context = $context;
+        return $this;
     }
 
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
         return $this;
     }
+
+    public function setProject(?Project $project): void
+    {
+        $this->project = $project;
+    }
+
 
 }

@@ -27,13 +27,12 @@ class ProjectController extends AbstractController
     #[Route('/allProject', name: '_all',methods: ["GET"])]
     public function getAllProjects(): Response
     {
-        //todo check roles and autho....
         $allProjects = $this->projectService->getAllProjects();
-//        dd($allProjects);
-        return $this->json(['result' => true,
+        return $this->json([
             'total' => count($allProjects),
             'data' => $allProjects,
-            'error' => []], Response::HTTP_OK, []);
+            'error' => []
+        ], Response::HTTP_OK, [], ['groups' => ["project:read"]]);
     }
 
     #[Route('/create', name: '_create',methods: ["POST"])]
