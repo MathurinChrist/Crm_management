@@ -38,41 +38,58 @@ class ProjectController extends AbstractController
     #[Route('/create', name: '_create',methods: ["POST"])]
     public function createProject(Request $request): Response
     {
-        $project = $this->serializer->deserialize($request->getContent(), Project::class, 'json');
+        $project = $this->serializer->deserialize($request->getContent(), Project::class, 'json', [
+            'groups' => ["project:create"]
+        ]);
+        $result = false;
+        $errors = $this->helperAction->handleErrors($this->validator->validate($project));
+
+        if (count($errors) === 0) {
+            $project = $this->projectService->createProject($project);
+            $result = true;
+        }
         //todo: add validation before sending to the database
-        $result = $this->projectService->createProject($project);
         return $this->json(
             [
-            'result' => true,
-            'data' => $result,
+                'result' => $result,
+                'data' => $project,
             'error' => []
             ], Response::HTTP_OK);
     }
 
-    #[Route('/{id}', name: '_update', methods: ["PUT", "PATCH"])]
-    public function updateProject(Request $request, int $id): Response
+    #[Route('/{project}', name: '_update', methods: ["PUT", "PATCH"])]
+    public function updateProject(Request $request, ?Project $project): Response
     {
-        $project = $this->projectService->getProjectById($id);
-        if($project === null){ return $this->helperAction->jsonNotFound(); }
+        if ($project === null) {
+            return $this->helperAction->jsonNotFoundOrError('Not Project associeted with');
+        }
 
-        $this->serializer->deserialize($request->getContent(), Project::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $project]);
+        $this->serializer->deserialize($request->getContent(), Project::class, 'json', [
+            'groups' => ["project:create"],
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['tasksNumber'],
+            AbstractNormalizer::OBJECT_TO_POPULATE => $project
+        ]);
+
+
         $errors = $this->validator->validate($project);
         if(count($errors) ===0){
-            $this->projectService->updateProject($project);
+            $project = $this->projectService->updateProject($project);
         }
         return $this->json(
             [
                 'result' => true,
                 'data' => $project,
                 'error' => []
-            ], Response::HTTP_OK);
+            ], Response::HTTP_OK, [], ['groups' => ["project:read"]]);
     }
 
     #[Route('/{id}', name: '_delete', methods: ["DELETE"])]
     public function deleteProject(int $id): Response
     {
         $project = $this->projectService->getProjectById($id);
-        if($project === null){ return $this->helperAction->jsonNotFound();}
+        if ($project === null) {
+            return $this->helperAction->JsonNotFoundOrError('Not Project associeted with');
+        }
 
         $this->projectService->deleteProject($project);
         return $this->json(

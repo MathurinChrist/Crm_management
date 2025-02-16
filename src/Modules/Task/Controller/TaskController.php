@@ -27,33 +27,33 @@ class TaskController extends AbstractController
     #[Route('/allTask', name: 'task_all',methods: ["GET"])]
     public function getAllTask(): Response
     {
-        return $this->json([
+        return $this->json(
+            [
             'total' => count($this->taskService->getAllTask()),
-            'tasks' => $this->taskService->getAllTask(),
-        ], Response::HTTP_OK, [], ['groups' => ['task:read']]);
+                'tasks' => $this->taskService->getAllTask()
+            ], Response::HTTP_OK, [], ['groups' => ['task:read']]
+        );
     }
 
     #[Route('/create', name: 'task_create',methods: ["POST"])]
     public function createTask(Request $request): Response
     {
-        $result = true;
+        $result = false;
         try {
             $task = $this->serializer->deserialize($request->getContent(), Task::class, 'json',
                 ['groups' => ["task:read", "task:write", "task:create"]]
             );
-            $errors = $this->validator->validate($task);
-            $errors = $this->helperAction->handleErrors($errors);
+            $errors = $this->helperAction->handleErrors($this->validator->validate($task));
             if (count($errors) === 0) {
-                $this->taskService->createTask($task);
-            } else {
-                $result = false;
-                $task = null;
+                $result = true;
+                $task = $this->taskService->createTask($task);
             }
             return $this->json([
                 'result' => $result,
-                'data' => $task,
+                'data' => $task ?? null,
                 'error' => $errors
-            ], count($errors) === 0 ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST, [], ['groups' => ['task:read']]);
+            ], count($errors) === 0 ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST, [],
+                ['groups' => ['task:read']]);
 
         } catch (\Exception $e) {
             return $this->helperAction->jsonNotFoundOrError($e->getMessage(), Response::HTTP_NOT_FOUND);
@@ -64,25 +64,27 @@ class TaskController extends AbstractController
     #[Route('/update/{task}', name: 'task_update', methods: ["PUT", "PATCH"])]
     public function updateTask(Request $request, ?Task $task): Response
     {
-        if (null === $task) {
-            return $this->helperAction->jsonNotFoundOrError();
-        }
-
-        $result = true;
-        $this->serializer->deserialize($request->getContent(),Task::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $task]);
-        $errors = $this->validator->validate($task);
-        $errors =  $this->helperAction->handleErrors($errors);
-        if( count($errors) === 0 ){
+        $this->serializer->deserialize($request->getContent(), Task::class, 'json',
+            [
+                'groups' => ["task:read", "task:write", "task:update"],
+                AbstractNormalizer::IGNORED_ATTRIBUTES => ['project'],
+                AbstractNormalizer::OBJECT_TO_POPULATE => $task
+            ]
+        );
+        $result = false;
+        $errors = $this->helperAction->handleErrors($this->validator->validate($task));
+        if (count($errors) === 0) {
+            $result = true;
             $this->taskService->updateTask($task);
-        } else {
-            $result = false;
-            $task =  null;
         }
         return $this->json([
             'result' => $result,
             'data' => $task,
             'error' => $errors
-        ], count($errors) ===0? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
+        ], count($errors) === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST, [], ['groups' => ['task:read']]);
+
+
+
     }
 
     #[Route('/delete/{task}', name: 'task_delete', methods: ["DELETE"])]
