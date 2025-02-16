@@ -35,10 +35,10 @@ class ProjectService
         return $project;
     }
 
-    public function updateProject(Project &$project): void
+    public function updateProject(Project $project): Project
     {
-        $this->entityManager->persist($project);
         $this->entityManager->flush();
+        return $project;
     }
 
     public function deleteProject(Project &$project): void

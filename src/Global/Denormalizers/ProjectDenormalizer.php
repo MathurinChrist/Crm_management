@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Global\Normalizers;
+namespace App\Global\Denormalizers;
 
 use App\Modules\Project\Entity\Project;
 use App\Modules\Project\Services\ProjectService;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class EntityDenormalizer implements DenormalizerInterface
+class ProjectDenormalizer implements DenormalizerInterface
 {
 
     public function __construct(
@@ -29,17 +29,22 @@ class EntityDenormalizer implements DenormalizerInterface
 
     public function denormalize($data, $type, $format = null, array $context = []): ?Project
     {
-        if (!is_int($data)) {
-            throw new \InvalidArgumentException('Invalid project ID.');
+        if (is_int($data)) {
+            $project = $this->projectService->getProjectById($data);
+            if ($project === null) {
+                throw new \RuntimeException('Project not found.');
+            }
         }
 
-        $project = $this->projectService->getProjectById($data);
-
-        if ($project === null) {
-            throw new \RuntimeException('Project not found.');
+        if (is_array($data)) {
+            if ($context['object_to_populate'] instanceof Project) {
+                $project = $context['object_to_populate'];
+                $project->setName($data['name']);
+                $project->setDescription($data['description']);
+                return $project;
+            }
         }
-
-        return $project;
+        return null;
     }
 
 }

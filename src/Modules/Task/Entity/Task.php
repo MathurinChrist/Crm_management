@@ -16,30 +16,31 @@ class Task
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    public ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[checkTaskProperty]
-    #[Groups(["task:read", "task:write", "task:create", "project:read"])]
+    #[Groups(["task:read", "task:write", "task:create", "task:update", "project:read"])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[checkTaskProperty]
-    #[Groups(["task:read", "task:write", "project:read"])]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
     private ?string $context = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["task:read", "task:write", "project:read"])]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Choice(choices: Task::statusOptions, message: 'The value chosen is not valid')]
-    #[Groups(["task:read", "task:write", "project:read"])]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
     private ?string $status = null;
 
     #[ORM\ManyToOne(targetEntity: Project::class, cascade: ['persist'], inversedBy: 'task')]
     #[ORM\JoinColumn(name: 'project_id', nullable: false, onDelete: 'cascade')]
-    #[Groups(["task:read", "task:write", "task:create"])]
+    #[Groups(["task:read"])]
     private Project $project;
 
     public function getId(): ?int

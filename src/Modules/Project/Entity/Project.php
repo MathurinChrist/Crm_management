@@ -21,17 +21,18 @@ class Project
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["task:read", "task:write", "project:read", "project:create", "project:update"])]
+    #[Groups(["project:read", "project:create", "project:update"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["task:read", "task:write", "project:read", "project:create", "project:update"])]
+    #[Groups(["project:read", "project:create", "project:update"])]
     private ?string $description = null;
 
-    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project')]
-    #[Groups(["project:read", "project:create", "project:update"])]
-    private Collection $task;
+    #[Groups(["project:read"])]
+    private ?int $tasksNumber = 0;
 
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project')]
+    private Collection $task;
 
     public function __construct()
     {
@@ -86,5 +87,10 @@ class Project
         }
         return $this;
 
+    }
+
+    public function getTasksNumber(): ?int
+    {
+        return $this->task->count();
     }
 }
