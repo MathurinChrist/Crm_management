@@ -2,6 +2,7 @@
 
 namespace App\Global\Denormalizers;
 
+use App\Helpers\HelperAction;
 use App\Modules\Project\Entity\Project;
 use App\Modules\Project\Services\ProjectService;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -11,6 +12,7 @@ class ProjectDenormalizer implements DenormalizerInterface
 
     public function __construct(
         private readonly ProjectService $projectService,
+        private readonly HelperAction $helperAction
     )
     {
     }
@@ -29,10 +31,12 @@ class ProjectDenormalizer implements DenormalizerInterface
 
     public function denormalize($data, $type, $format = null, array $context = []): ?Project
     {
+        $project = null;
         if (is_int($data)) {
             $project = $this->projectService->getProjectById($data);
             if ($project === null) {
-                throw new \RuntimeException('Project not found.');
+                $this->helperAction->jsonNotFoundOrError('Project not found.');
+                return null;
             }
         }
 
@@ -44,7 +48,7 @@ class ProjectDenormalizer implements DenormalizerInterface
                 return $project;
             }
         }
-        return null;
+        return $project;
     }
 
 }
