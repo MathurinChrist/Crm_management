@@ -2,7 +2,7 @@
 
 namespace App\Modules\Task\Entity;
 
-use App\Global\Validators\checkTaskProperty;
+use App\Domain\Validators\checkTaskProperty;
 use App\Modules\Project\Entity\Project;
 use App\Modules\Comments\Entity\Comments;
 use App\Modules\Task\Repository\TaskRepository;

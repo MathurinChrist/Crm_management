@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Global\Validators;
+namespace App\Domain\Validators;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -14,10 +14,7 @@ class checkTaskProperty extends Constraint
     public function __construct(?string $mode = null, ?string $message = null, ?array $groups = null, $payload = null)
     {
         parent::__construct([], $groups, $payload);
-
         $this->mode = $mode ?? $this->mode;
         $this->message = $message ?? $this->message;
     }
-
-
 }

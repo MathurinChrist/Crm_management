@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Global\Denormalizers;
+namespace App\Domain\Denormalizers;
 
 use App\Helpers\HelperAction;
 use App\Modules\Project\Entity\Project;
