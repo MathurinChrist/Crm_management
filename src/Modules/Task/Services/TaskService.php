@@ -21,6 +21,11 @@ class TaskService
         return $this->taskRepository->findAll();
     }
 
+    public function getTaskById(int $id): ?Task
+    {
+        return $this->taskRepository->find($id);
+    }
+
     public function createTask(Task $task): ?Task
     {
         $this->dispatcher->dispatch(new TaskCreatedEvent($task));
