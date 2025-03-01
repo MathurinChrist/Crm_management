@@ -2,19 +2,18 @@
 
 namespace App\Modules\Comments\Repository;
 
-use App\Modules\Comments\Entity\Comments;
-use App\Modules\Project\Entity\Project;
+use App\Modules\Comments\Entity\Comment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Project>
+ * @extends ServiceEntityRepository<Comment>
  */
-class CommentsRepository extends ServiceEntityRepository
+class CommentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Comments::class);
+        parent::__construct($registry, Comment::class);
     }
 
     //    /**

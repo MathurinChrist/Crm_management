@@ -3,8 +3,9 @@
 namespace App\Modules\Task\Entity;
 
 use App\Domain\Validators\checkTaskProperty;
+use App\Entity\Traits\Timestampable;
 use App\Modules\Project\Entity\Project;
-use App\Modules\Comments\Entity\Comments;
+use App\Modules\Comments\Entity\Comment;
 use App\Modules\Task\Repository\TaskRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,8 +14,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Task
 {
+    use Timestampable;
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -51,10 +54,10 @@ class Task
     #[Groups(["task:read"])]
     private Project $project;
 
-    #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'task', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'task', cascade: ['persist', 'remove'])]
     private Collection $comments;
     #[Groups(["task:read"])]
-    private Comments $comment;
+    private Comment $comment;
 
     public function getId(): ?int
     {
@@ -121,12 +124,12 @@ class Task
         return $this->comments;
     }
 
-    public function addComment(Comments $comment): void
+    public function addComment(Comment $comment): void
     {
         $this->comments->add($comment);
     }
 
-    public function removeComment(Comments $comment): void
+    public function removeComment(Comment $comment): void
     {
         $this->comments->removeElement($comment);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Project\Entity;
 
+use App\Entity\Traits\Timestampable;
 use App\Modules\Project\Repository\ProjectRepository;
 use App\Modules\Task\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,10 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Project
 {
-
-
+    use Timestampable;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

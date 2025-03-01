@@ -3,15 +3,17 @@
 namespace App\Modules\Comments\Entity;
 
 use App\Domain\Validators\MinLength;
-use App\Modules\Comments\Repository\CommentsRepository;
+use App\Entity\Traits\Timestampable;
+use App\Modules\Comments\Repository\CommentRepository;
 use App\Modules\Task\Entity\Task;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CommentsRepository::class)]
-class Comments
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Entity(repositoryClass: CommentRepository::class)]
+class Comment
 {
+    use Timestampable;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,9 +21,8 @@ class Comments
 
     #[ORM\Column(length: 255)]
     #[Groups(["comment:read", "comment:write", "comment:create"])]
-    #[MinLength(message: 'Two caracters are providing for this property')]
+    #[MinLength(message: 'global.min_length')]
     private ?string $content = null;
-
 
     #[ORM\ManyToOne(targetEntity: Task::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
