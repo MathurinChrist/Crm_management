@@ -38,12 +38,11 @@ class ProjectController extends AbstractController
     #[Route('/create', name: '_create',methods: ["POST"])]
     public function createProject(Request $request): Response
     {
+        $result = false;
         $project = $this->serializer->deserialize($request->getContent(), Project::class, 'json', [
             'groups' => ["project:create"]
         ]);
-        $result = false;
         $errors = $this->helperAction->handleErrors($this->validator->validate($project));
-
         if (count($errors) === 0) {
             $project = $this->projectService->createProject($project);
             $result = true;
@@ -54,14 +53,14 @@ class ProjectController extends AbstractController
                 'result' => $result,
                 'data' => $project,
             'error' => []
-            ], Response::HTTP_OK);
+            ], Response::HTTP_OK, ['groups' => ["project:read"]]);
     }
 
     #[Route('/{project}', name: '_update', methods: ["PUT", "PATCH"])]
     public function updateProject(Request $request, ?Project $project): Response
     {
         if ($project === null) {
-            return $this->helperAction->jsonNotFoundOrError('Not Project associeted with');
+            return $this->helperAction->jsonNotFoundOrError('project_module.not_found');
         }
 
         $this->serializer->deserialize($request->getContent(), Project::class, 'json', [
@@ -88,7 +87,7 @@ class ProjectController extends AbstractController
     {
         $project = $this->projectService->getProjectById($id);
         if ($project === null) {
-            return $this->helperAction->JsonNotFoundOrError('Not Project associeted with');
+            return $this->helperAction->JsonNotFoundOrError('project_module.not_found');
         }
 
         $this->projectService->deleteProject($project);

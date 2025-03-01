@@ -2,41 +2,41 @@
 
 namespace App\Modules\Comments\Services;
 
-use App\Modules\Comments\Entity\Comments;
-use App\Modules\Comments\Repository\CommentsRepository;
+use App\Modules\Comments\Entity\Comment;
+use App\Modules\Comments\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CommentServices
 {
     public function __construct(
-        private readonly CommentsRepository     $commentsRepository,
+        private readonly CommentRepository $commentRepository,
         private readonly EntityManagerInterface $entityManager
     )
     {
     }
 
-    public function getAllCommentsByUser(): array
+    public function getAllCommentByUser(): array
     {
-        return $this->commentsRepository->findAll();
+        return $this->commentRepository->findAll();
     }
 
     public function getCommentForTask(int $id): array
     {
-        return $this->commentsRepository->findBy(['task' => $id]);
+        return $this->commentRepository->findBy(['task' => $id]);
     }
 
-    public function addCommentOnTask(Comments $comment): void
+    public function addCommentOnTask(Comment $comment): void
     {
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
     }
 
-    public function updateCommentOnTask(Comments $comment): void
+    public function updateCommentOnTask(Comment $comment): void
     {
         $this->entityManager->flush();
     }
 
-    public function deleteCommentOnTAsk(Comments $comment): void
+    public function deleteCommentOnTAsk(Comment $comment): void
     {
         $this->entityManager->remove($comment);
         $this->entityManager->flush();

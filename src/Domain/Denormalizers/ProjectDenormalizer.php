@@ -26,7 +26,7 @@ class ProjectDenormalizer implements DenormalizerInterface
 
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return $type === Project::class;
+        return false;
     }
 
     public function denormalize($data, $type, $format = null, array $context = []): ?Project
@@ -39,14 +39,17 @@ class ProjectDenormalizer implements DenormalizerInterface
                 return null;
             }
         }
-
         if (is_array($data)) {
-            if ($context['object_to_populate'] instanceof Project) {
+            $objectToPopulate = $context['object_to_populate'] ?? null;
+            if ($objectToPopulate instanceof Project) {
                 $project = $context['object_to_populate'];
                 $project->setName($data['name']);
                 $project->setDescription($data['description']);
                 return $project;
             }
+            $project = new Project();
+            $project->setName($data['name']);
+            $project->setDescription($data['description']);
         }
         return $project;
     }

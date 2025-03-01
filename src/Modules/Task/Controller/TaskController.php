@@ -3,6 +3,7 @@
 namespace App\Modules\Task\Controller;
 
 use App\Helpers\HelperAction;
+use App\Modules\Project\Entity\Project;
 use App\Modules\Task\Entity\Task;
 use App\Modules\Task\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/task', name: 'task_')]
 class TaskController extends AbstractController
@@ -21,7 +23,8 @@ class TaskController extends AbstractController
         private readonly TaskService $taskService,
         private readonly SerializerInterface $serializer,
         private readonly ValidatorInterface $validator,
-        private readonly HelperAction $helperAction
+        private readonly HelperAction        $helperAction,
+        private readonly TranslatorInterface $translator
     ){}
 
     #[Route('/allTask', name: 'task_all',methods: ["GET"])]
@@ -35,35 +38,39 @@ class TaskController extends AbstractController
         );
     }
 
-    #[Route('/create', name: 'task_create',methods: ["POST"])]
-    public function createTask(Request $request): Response
+    #[Route('/{project}/create', name: 'task_create', methods: ["POST"])]
+    public function createTask(Request $request, ?Project $project): Response
     {
-        $result = false;
-        try {
-            $task = $this->serializer->deserialize($request->getContent(), Task::class, 'json',
-                ['groups' => ["task:read", "task:write", "task:create"]]
-            );
-            $errors = $this->helperAction->handleErrors($this->validator->validate($task));
-            if (count($errors) === 0) {
-                $result = true;
-                $task = $this->taskService->createTask($task);
-            }
-            return $this->json([
-                'result' => $result,
-                'data' => $task ?? null,
-                'error' => $errors
-            ], count($errors) === 0 ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST, [],
-                ['groups' => ['task:read']]);
-
-        } catch (\Exception $e) {
-            return $this->helperAction->jsonNotFoundOrError($e->getMessage(), Response::HTTP_NOT_FOUND);
+        if ($project === null) {
+            return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
         }
+        $result = false;
+        /* @var Task $task */
+        $task = $this->serializer->deserialize($request->getContent(), Task::class, 'json',
+            ['groups' => ["task:read", "task:write", "task:create"]]
+        );
+        $task->setProject($project);
+
+        $errors = $this->helperAction->handleErrors($this->validator->validate($task));
+        if (count($errors) === 0) {
+            $result = true;
+            $task = $this->taskService->createTask($task);
+        }
+        return $this->json([
+            'result' => $result,
+            'data' => $task,
+            'error' => $errors
+        ], count($errors) === 0 ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST, [],
+            ['groups' => ['task:read']]);
 
     }
 
-    #[Route('/update/{task}', name: 'task_update', methods: ["PUT", "PATCH"])]
-    public function updateTask(Request $request, ?Task $task): Response
+    #[Route('/{project}/update/{task}', name: 'task_update', methods: ["PUT", "PATCH"])]
+    public function updateTask(Request $request, ?Task $task, ?Project $project): Response
     {
+        if ($project === null || $task === null) {
+            return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
+        }
         $this->serializer->deserialize($request->getContent(), Task::class, 'json',
             [
                 'groups' => ["task:read", "task:write", "task:update"],
@@ -82,14 +89,14 @@ class TaskController extends AbstractController
             'data' => $task,
             'error' => $errors
         ], count($errors) === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST, [], ['groups' => ['task:read']]);
-
-
-
     }
 
-    #[Route('/delete/{task}', name: 'task_delete', methods: ["DELETE"])]
-    public function deleteTask(Request $request, ?Task $task): Response
+    #[Route('/{project}/delete/{task}', name: 'task_delete', methods: ["DELETE"])]
+    public function deleteTask(Request $request, ?Task $task, ?Project $project): Response
     {
+        if ($project === null) {
+            return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
+        }
         if (null === $task) {
             return $this->helperAction->jsonNotFoundOrError();
         }

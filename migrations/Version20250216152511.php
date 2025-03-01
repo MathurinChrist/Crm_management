@@ -16,11 +16,10 @@ final class Version20250216152511 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE comments (
+        $this->addSql('CREATE TABLE comment (
             id INT AUTO_INCREMENT NOT NULL, 
             task_id INT NOT NULL, 
             content TEXT NOT NULL, 
-            created_at DATETIME NOT NULL, 
             INDEX IDX_TASK_COMMENT (task_id), 
             PRIMARY KEY(id), 
             CONSTRAINT FK_TASK_COMMENT FOREIGN KEY (task_id) REFERENCES task (id) ON DELETE CASCADE
