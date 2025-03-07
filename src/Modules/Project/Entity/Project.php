@@ -2,16 +2,19 @@
 
 namespace App\Modules\Project\Entity;
 
+use App\Domain\Validators\MinLength;
 use App\Entity\Traits\Timestampable;
 use App\Modules\Project\Repository\ProjectRepository;
 use App\Modules\Task\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['name'], message: 'project_module.allready_esist')]
 class Project
 {
     use Timestampable;
@@ -23,6 +26,7 @@ class Project
 
     #[ORM\Column(length: 255)]
     #[Groups(["project:read", "project:create", "project:update"])]
+    #[MinLength]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]

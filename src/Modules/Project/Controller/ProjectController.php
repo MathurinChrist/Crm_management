@@ -47,16 +47,16 @@ class ProjectController extends AbstractController
             $project = $this->projectService->createProject($project);
             $result = true;
         }
-        //todo: add validation before sending to the database
+        $codeStatus = count($errors) === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
         return $this->json(
             [
                 'result' => $result,
                 'data' => $project,
-            'error' => []
-            ], Response::HTTP_OK, ['groups' => ["project:read"]]);
+                'errors' => $errors
+            ], $codeStatus, ['groups' => ["project:read"]]);
     }
 
-    #[Route('/{project}', name: '_update', methods: ["PUT", "PATCH"])]
+    #[Route('/{project}', name: 'update', methods: ["PUT", "PATCH"])]
     public function updateProject(Request $request, ?Project $project): Response
     {
         if ($project === null) {
@@ -82,7 +82,7 @@ class ProjectController extends AbstractController
             ], Response::HTTP_OK, [], ['groups' => ["project:read"]]);
     }
 
-    #[Route('/{id}', name: '_delete', methods: ["DELETE"])]
+    #[Route('/delete/{id}', name: '_delete', methods: ["DELETE"])]
     public function deleteProject(int $id): Response
     {
         $project = $this->projectService->getProjectById($id);
