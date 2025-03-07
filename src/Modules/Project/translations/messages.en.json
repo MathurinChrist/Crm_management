@@ -1,5 +1,6 @@
 {
   "project_module": {
-    "not_found": "Project not found"
+    "not_found": "Project not found",
+    "allready_esist": "A project allready exists with this value"
   }
 }

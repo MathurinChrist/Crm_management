@@ -1,5 +1,6 @@
 {
   "project_module": {
-    "not_found": "Aucun projet trouvé."
+    "not_found": "Aucun projet trouvé.",
+    "": "Un project exist déja avec cette valeur"
   }
 }
