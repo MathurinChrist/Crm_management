@@ -30,6 +30,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Modules/'
                 prefix: 'App\Modules'
                 alias: Modules
+            App\Security:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Security/'
+                prefix: 'App\Security'
+                alias: Security
         controller_resolver:
             auto_mapping: false
 
