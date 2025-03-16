@@ -18,8 +18,8 @@ final class Version20250308173926 extends AbstractMigration
     {
         $this->addSql('CREATE TABLE user (
             id INT AUTO_INCREMENT NOT NULL,
-            lastname VARCHAR(255) NOT NULL,
-            firstname VARCHAR(255) NOT NULL,
+            last_name VARCHAR(255) NOT NULL,
+            first_name VARCHAR(255) NOT NULL,
             gender VARCHAR(255) NOT NULL,
             email VARCHAR(180) NOT NULL default \'O\',
             INDEX IDX_USER_EMAIL (email),
