@@ -1,0 +1,7 @@
+{
+  "user": {
+    "not_found": "Aucun utilisateur trouvé.",
+    "allready_esist": "Un utilisateur existe déja avec cet email",
+    "not_valid_email": "L'adresse email '{{ value }}' n'est pas valide."
+  }
+}
