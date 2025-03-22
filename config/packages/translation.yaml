@@ -4,6 +4,7 @@ framework:
     default_path: '%kernel.project_dir%/translations'
     paths:
       - '%kernel.project_dir%/src/Modules/Project/translations'
+      - '%kernel.project_dir%/src/Security/translations/'
     fallbacks:
       - fr
   #set_locale_from_accept_language: true
