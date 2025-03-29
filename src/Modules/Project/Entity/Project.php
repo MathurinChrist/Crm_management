@@ -4,6 +4,7 @@ namespace App\Modules\Project\Entity;
 
 use App\Domain\Validators\MinLength;
 use App\Entity\Traits\Timestampable;
+use App\Entity\Traits\UserTrait;
 use App\Modules\Project\Repository\ProjectRepository;
 use App\Modules\Task\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,6 +19,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class Project
 {
     use Timestampable;
+    use UserTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

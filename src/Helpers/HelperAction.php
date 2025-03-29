@@ -2,6 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Modules\Comments\Entity\Comment;
+use App\Modules\Project\Entity\Project;
+use App\Modules\Task\Entity\Task;
+use App\Security\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -31,6 +35,12 @@ class HelperAction  extends AbstractController
     {
         $message = $this->translator->trans($message);
         return $this->json(['result' => false, 'errors' => [$message]], $status);
+    }
+
+    public static function SetCreateOrUpdateBy(Task|Project|Comment &$entity, User $user): void
+    {
+        $entity->setCreatedBy($user);
+        $entity->setUpdatedBy($user);
     }
 
     public  function convertObject($obj): array

@@ -4,6 +4,7 @@ namespace App\Modules\Task\Entity;
 
 use App\Domain\Validators\checkTaskProperty;
 use App\Entity\Traits\Timestampable;
+use App\Entity\Traits\UserTrait;
 use App\Modules\Project\Entity\Project;
 use App\Modules\Comments\Entity\Comment;
 use App\Modules\Task\Repository\TaskRepository;
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Task
 {
     use Timestampable;
+    use UserTrait;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();

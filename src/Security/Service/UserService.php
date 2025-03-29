@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 class UserService
 {
     public function __construct(
-        private readonly UserRepository         $userRepository,
         private readonly EntityManagerInterface $entityManager
     )
     {

@@ -4,6 +4,7 @@ namespace App\Modules\Comments\Entity;
 
 use App\Domain\Validators\MinLength;
 use App\Entity\Traits\Timestampable;
+use App\Entity\Traits\UserTrait;
 use App\Modules\Comments\Repository\CommentRepository;
 use App\Modules\Task\Entity\Task;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,6 +15,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class Comment
 {
     use Timestampable;
+    use UserTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

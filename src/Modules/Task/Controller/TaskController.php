@@ -6,7 +6,9 @@ use App\Helpers\HelperAction;
 use App\Modules\Project\Entity\Project;
 use App\Modules\Task\Entity\Task;
 use App\Modules\Task\Services\TaskService;
+use App\Security\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,18 +25,21 @@ class TaskController extends AbstractController
         private readonly TaskService $taskService,
         private readonly SerializerInterface $serializer,
         private readonly ValidatorInterface $validator,
-        private readonly HelperAction        $helperAction,
+        private readonly HelperAction $helperAction,
         private readonly TranslatorInterface $translator
     ){}
 
-    #[Route('/allTask', name: 'task_all',methods: ["GET"])]
-    public function getAllTask(): Response
+    #[Route('/{project}/allTask', name: 'task_all', methods: ["GET"])]
+    public function getAllTask(?Project $project): Response
     {
+        if ($project === null) {
+            return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
+        }
         return $this->json(
             [
-            'total' => count($this->taskService->getAllTask()),
-                'tasks' => $this->taskService->getAllTask()
-            ], Response::HTTP_OK, [], ['groups' => ['task:read']]
+                'total' => count($this->taskService->getAllTask($project->getId())),
+                'tasks' => $this->taskService->getAllTask($project->getId()),
+            ], Response::HTTP_OK, [], ['groups' => ['task:read', 'user:read']]
         );
     }
 
@@ -44,6 +49,8 @@ class TaskController extends AbstractController
         if ($project === null) {
             return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
         }
+        /* @var User $user */
+        $user = $this->getUser();
         $result = false;
         /* @var Task $task */
         $task = $this->serializer->deserialize($request->getContent(), Task::class, 'json',
@@ -54,7 +61,7 @@ class TaskController extends AbstractController
         $errors = $this->helperAction->handleErrors($this->validator->validate($task));
         if (count($errors) === 0) {
             $result = true;
-            $task = $this->taskService->createTask($task);
+            $task = $this->taskService->createTask($task, $user);
         }
         return $this->json([
             'result' => $result,
@@ -71,6 +78,8 @@ class TaskController extends AbstractController
         if ($project === null || $task === null) {
             return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
         }
+        /** @var User $user */
+        $user = $this->getUser();
         $this->serializer->deserialize($request->getContent(), Task::class, 'json',
             [
                 'groups' => ["task:read", "task:write", "task:update"],
@@ -82,7 +91,7 @@ class TaskController extends AbstractController
         $errors = $this->helperAction->handleErrors($this->validator->validate($task));
         if (count($errors) === 0) {
             $result = true;
-            $this->taskService->updateTask($task);
+            $this->taskService->updateTask($task, $user);
         }
         return $this->json([
             'result' => $result,
