@@ -5,6 +5,7 @@ namespace App\Modules\Project\Controller;
 use App\Helpers\HelperAction;
 use App\Modules\Project\Entity\Project;
 use App\Modules\Project\Services\ProjectService;
+use App\Security\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,24 +28,28 @@ class ProjectController extends AbstractController
     #[Route('/allProject', name: '_all',methods: ["GET"])]
     public function getAllProjects(): Response
     {
-        $allProjects = $this->projectService->getAllProjects();
+        /** @var User $user */
+        $user = $this->getUser();
+        $allProjects = $this->projectService->getAllProjects($user);
         return $this->json([
             'total' => count($allProjects),
             'data' => $allProjects,
             'error' => []
-        ], Response::HTTP_OK, [], ['groups' => ["project:read"]]);
+        ], Response::HTTP_OK, [], ['groups' => ["project:read", 'user:read']]);
     }
 
     #[Route('/create', name: '_create',methods: ["POST"])]
     public function createProject(Request $request): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $result = false;
         $project = $this->serializer->deserialize($request->getContent(), Project::class, 'json', [
             'groups' => ["project:create"]
         ]);
         $errors = $this->helperAction->handleErrors($this->validator->validate($project));
         if (count($errors) === 0) {
-            $project = $this->projectService->createProject($project);
+            $project = $this->projectService->createProject($project, $user);
             $result = true;
         }
         $codeStatus = count($errors) === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
@@ -53,7 +58,7 @@ class ProjectController extends AbstractController
                 'result' => $result,
                 'data' => $project,
                 'errors' => $errors
-            ], $codeStatus, ['groups' => ["project:read"]]);
+            ], $codeStatus, [], ['groups' => ['project:read', 'user:read']]);
     }
 
     #[Route('/{project}', name: 'update', methods: ["PUT", "PATCH"])]
@@ -79,7 +84,7 @@ class ProjectController extends AbstractController
                 'result' => true,
                 'data' => $project,
                 'error' => []
-            ], Response::HTTP_OK, [], ['groups' => ["project:read"]]);
+            ], Response::HTTP_OK, [], ['groups' => ['project:read', 'user:read']]);
     }
 
     #[Route('/delete/{id}', name: '_delete', methods: ["DELETE"])]

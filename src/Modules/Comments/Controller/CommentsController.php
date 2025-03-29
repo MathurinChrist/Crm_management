@@ -19,14 +19,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CommentsController extends AbstractController
 {
     public function __construct(
-        private readonly CommentServices     $commentServices,
+        private readonly CommentServices    $commentServices,
         private readonly SerializerInterface $serializer,
-        private readonly HelperAction        $helperAction,
-        private readonly ValidatorInterface  $validator,
-        private readonly TranslatorInterface $translator
+        private readonly HelperAction       $helperAction,
+        private readonly ValidatorInterface $validator
 
     )
     {
+
     }
 
     #[Route('/all', name: '_all_comments_task', methods: ["GET"])]
@@ -37,7 +37,7 @@ class CommentsController extends AbstractController
             'total' => count($allComments),
             'data' => $allComments,
             'error' => []
-        ], Response::HTTP_OK, [], ['groups' => ['comment:read']]);
+        ], Response::HTTP_OK, [], ['groups' => ['comment:read', 'user:read']]);
     }
 
     #[Route('/all/{task}', name: '_comments_on_task', methods: ["GET"])]
@@ -67,7 +67,7 @@ class CommentsController extends AbstractController
         return $this->sameLogic($comment, 'create');
     }
 
-    public function sameLogic(Comment $comment, string $action = 'create', ?array $groups = ['comment:read']): Response
+    public function sameLogic(Comment $comment, string $action = 'create', ?array $groups = ['comment:read', 'user:read']): Response
     {
         $errors = $this->validator->validate($comment);
         $errors = HelperAction::handleErrors($errors);
