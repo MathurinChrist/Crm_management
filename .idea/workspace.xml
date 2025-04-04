@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="67140acf-0b6e-459a-bb10-6fba0d088a8f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    <list default="true" id="67140acf-0b6e-459a-bb10-6fba0d088a8f" name="Changes" comment="fix: 'configuration of webpack'">
+      <change afterPath="$PROJECT_DIR$/src/assets/background_image.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/LoginComponent.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/router/authentication.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/routes.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +31,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "MathurinChrist"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/MathurinChrist/Crm_management_front.git",
+    "accountId": "7918fab4-e7b2-4139-bd73-b4696ad1f4cd"
+  }
+}]]></component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/bin/php" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -95,6 +111,7 @@
       <workItem from="1742552087308" duration="4312000" />
       <workItem from="1742643272814" duration="9000" />
       <workItem from="1743541657391" duration="1003000" />
+      <workItem from="1743549976359" duration="1453000" />
     </task>
     <servers />
   </component>
