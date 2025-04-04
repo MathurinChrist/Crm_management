@@ -1,4 +1,7 @@
+import authentication from './authentication.js'
+
 const routes = [
+    ...authentication,
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
