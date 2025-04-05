@@ -1,7 +1,9 @@
 <template>
   <q-header elevated class="bg-primary">
     <q-toolbar>
-      <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
+      <div class="icon">
+        <AllIcon name="CrmIcon" :size="80" color="white"/>
+      </div>
       <q-toolbar-title>Header</q-toolbar-title>
     </q-toolbar>
   </q-header>
@@ -9,8 +11,11 @@
 
 <script >
 
+import AllIcon from "components/icons/AllIcon.vue";
+
 export default {
   name: 'HeaderPage',
+  components: {AllIcon},
   props: {
   },
   data(){

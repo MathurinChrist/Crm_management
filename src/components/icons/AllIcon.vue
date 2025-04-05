@@ -1,7 +1,7 @@
 <template>
   <div class="icon">
-    <DashboardIcon v-if="name === 'DashboardIcon' " :size="24" :color="color"/>
-    <CrmIcon v-if="name === 'CrmIcon' " :size="24" :color="color"/>
+    <DashboardIcon v-if="name === 'DashboardIcon' " :size="size" :color="color"/>
+    <CrmIcon v-if="name === 'CrmIcon' " :size="size" :color="color"/>
   </div>
 </template>
 
@@ -17,6 +17,10 @@ export  default {
     name: {
       type: String,
       requited: true
+    },
+    size: {
+      type: Number,
+      default: 24
     },
     color: {
       type: String,
