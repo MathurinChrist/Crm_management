@@ -44,7 +44,7 @@ class UserController extends AbstractController
         $countErrors = count($errors);
 
         if ($countErrors === 0) {
-            $this->userService->userRegistered($user);
+            $this->userService->userRegistered($user, $plaintextPassword);
         }
         return $this->json([
             "errors" => $errors,
