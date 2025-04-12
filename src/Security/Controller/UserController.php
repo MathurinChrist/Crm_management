@@ -18,14 +18,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends AbstractController
 {
     public function __construct(
-        private readonly SerializerInterface         $serializer,
-        private readonly UserService                 $userService,
+        private readonly SerializerInterface $serializer,
+        private readonly UserService $userService,
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly HelperAction                $helperAction,
-        private readonly ValidatorInterface          $validator
+        private readonly HelperAction $helperAction,
+        private readonly ValidatorInterface $validator
+    ){
 
-    )
-    {
     }
 
     #[Route('/signIn', name: 'registered', methods: ["POST"])]
@@ -49,7 +48,6 @@ class UserController extends AbstractController
         return $this->json([
             "errors" => $errors,
             "password" => $plaintextPassword,
-        ], $countErrors === 0 ? Response::HTTP_BAD_GATEWAY : Response::HTTP_BAD_REQUEST);
+        ], $countErrors === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
     }
-
 }
