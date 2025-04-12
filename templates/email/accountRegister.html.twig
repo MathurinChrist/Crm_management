@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Création de la plateforme{% endblock %}
-{% block introduction %} Bienvenue {{ nom }}{% endblock %}
+{% block introduction %} Bienvenue {{ name }}{% endblock %}
 
 {% block body %}
     <div style="background-color: white; padding: 30px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px;">
-        <p>Bonjour {{ nom }},</p>
+        <p>Bonjour {{ name }},</p>
         <p>Votre compte a été créé avec succès ! 🎉</p>
 
         <p>Voici vos informations de connexion :</p>
 
         <ul style="line-height: 1.8;">
             <li><strong>Email :</strong> {{ userEmail }}</li>
-            <li><strong>Mot de passe :</strong> {{ motdepasse }}</li>
+            <li><strong>Mot de passe :</strong> {{ password }}</li>
         </ul>
 
         <p>Nous vous recommandons de changer votre mot de passe après votre première connexion.</p>

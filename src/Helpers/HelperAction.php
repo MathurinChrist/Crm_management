@@ -14,11 +14,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class HelperAction  extends AbstractController
 {
     public function __construct(
-        private readonly TranslatorInterface $translator,
-    )
-    {
+        private readonly TranslatorInterface $translator
+    ){
     }
 
+    public static function getEnvVar(string $key): string|bool
+    {
+        //todo: must refacto this by using ParameterBagInterface
+        $value = $_ENV[$key] ?? getenv($key);
+        if ($value === 'true') {
+            $value = true;
+        }
+        if ($value === 'false') {
+            $value = false;
+        }
+        return $value;
+    }
     public static function handleErrors(ConstraintViolationList $violations): ?array
     {
         //token git without expiration date:  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
