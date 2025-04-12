@@ -3,8 +3,6 @@
 namespace App\Modules\Project\Subscriber;
 
 use App\Modules\Project\Events\TaskCreatedEvent;
-use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class TaskSubscriber implements EventSubscriberInterface
@@ -21,8 +19,9 @@ class TaskSubscriber implements EventSubscriberInterface
         ];
     }
 
-    #[NoReturn] public function onTaskCreatedEvent(TaskCreatedEvent $event): void
+     public function onTaskCreatedEvent(TaskCreatedEvent $event): void
     {
+
 
     }
 }
