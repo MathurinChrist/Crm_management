@@ -17,21 +17,26 @@ class UserRegistred implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            OnUserCreatedEvent::class => 'onUserRegistred',
+            OnUserCreatedEvent::class => 'onUserRegistredOrCreated',
         ];
     }
 
-    public function onUserRegistred(OnUserCreatedEvent $event): void
+    public function onUserRegistredOrCreated(OnUserCreatedEvent $event): void
     {
+        $template = 'email/accountRegister.html.twig';
+        $message = 'Inscription au Crm';
        if ($event->getUser() !== null) {
+           if (!in_array("ROLE_SUPER_ADMIN", $event->getUser()->getRoles())) {
+               $message = "Un compte vient d'être crée avec cette adresse email";
+           }
            $context = [];
            $context['name'] = $event->getUser()->getFullName();
            $context['userEmail'] = $event->getUser()->getEmail();
            $context['password'] = $event->getPassword();
 
            $this->emailingService->sendTestMail(
-               'je suis entrain de travailler',
-               'email/accountRegister.html.twig',
+               $message,
+               $template,
                $context
            );
        }

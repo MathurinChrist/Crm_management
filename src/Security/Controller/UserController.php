@@ -27,10 +27,11 @@ class UserController extends AbstractController
 
     }
 
-    #[Route('/signIn', name: 'registered', methods: ["POST"])]
+    #[Route('/admin/signIn', name: 'registered', methods: ["POST"])]
     public function userRegistered(Request $request): ?Response
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+        $user->setRoles(['ROLE_SUPER_ADMIN']);
         $plaintextPassword = substr(str_shuffle(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 0, 16);
         $hashedPassword = $this->passwordHasher->hashPassword(

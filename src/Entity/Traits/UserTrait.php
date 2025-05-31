@@ -9,12 +9,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 trait UserTrait
 {
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "createdBy", referencedColumnName: "id", nullable: false)]
+    #[ORM\JoinColumn(name: "createdBy", referencedColumnName: "id", nullable: true)]
     #[Groups(['project:read', 'user:read'])]
     private ?User $createdBy;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "updatedBy", referencedColumnName: "id", nullable: false)]
+    #[ORM\JoinColumn(name: "updatedBy", referencedColumnName: "id", nullable: true)]
     #[Groups(['project:read', 'user:read'])]
     private ?User $updatedBy;
 

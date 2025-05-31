@@ -2,6 +2,7 @@
 
 namespace App\Security\Entity;
 
+use App\Entity\Traits\UserTrait;
 use App\Security\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -14,10 +15,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'user.allready_esist')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use UserTrait;
     const GENDER = ['M', 'F', 'O'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['user:read'])]
     private int $id;
 
     #[ORM\Column(length: 255)]
@@ -40,7 +43,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $email;
 
+    #[Groups(['user:read'])]
+    #[ORM\Column(type: 'string', length: 180)]
+    private ?string $user_type = 'admin';
+
     #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
     private array $roles = [];
 
     #[ORM\Column(type: 'string')]
@@ -56,20 +64,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
-        return $this;
-    }
-
     public function getFirstName(): string
     {
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setLastName(string $lastName): self
     {
-        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         return $this;
     }
 
@@ -78,22 +80,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->gender;
     }
 
-    public function setGender(string $gender): self
+    public function setFirstName(string $firstName): self
     {
-        $this->gender = $gender;
+        $this->firstName = $firstName;
         return $this;
     }
 
     public function getEmail(): ?string
     {
         return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
     }
 
     /**
@@ -130,6 +125,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function getUserType(): string
+    {
+        return $this->user_type;
+    }
+
+    public function setUserType($type): self
+    {
+        $this->user_type = $type;
+        return $this;
+    }
+
+    public function setGender(string $gender): self
+    {
+        $this->gender = $gender;
+        return $this;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
     }
 
     public function setPassword(string $password): self
