@@ -36,9 +36,16 @@ class UserService
         $this->entityManager->flush();
     }
 
-    public function getUsers  () : ?array
+    public function getUsers  ($user) : ?array
     {
-        return $this->userRepository->findAll();
+        /** @var User $user */
+        $id_admin = $user->getCreatedBy() === null ? $user->getId() : $user->getCreatedBy()->getId();
+        $allUsers = $this->userRepository->findUsersCreatedBy($id_admin) ?? [];
+
+        if ($user->getCreatedBy() === null) {
+            $allUsers[] = $user;
+        }
+        return $allUsers;
     }
 
 }
