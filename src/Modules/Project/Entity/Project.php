@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -21,6 +22,7 @@ class Project
     use Timestampable;
     use UserTrait;
 
+    const statusOptions = ['todo', 'done', 'current'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -39,6 +41,10 @@ class Project
     #[Groups(["project:read"])]
     private ?int $tasksNumber = 0;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(["project:read", "project:create", "project:update"])]
+    #[Assert\Choice(choices: Project::statusOptions, message: 'The value chosen is not valid')]
+    private string $status;
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project')]
     private Collection $task;
 
@@ -97,8 +103,17 @@ class Project
 
     }
 
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
     public function getTasksNumber(): ?int
     {
         return $this->task->count();
+    }
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
     }
 }
