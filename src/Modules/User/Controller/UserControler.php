@@ -6,7 +6,6 @@ use App\Security\Entity\User;
 use App\Security\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserControler extends AbstractController
@@ -23,15 +22,15 @@ class UserControler extends AbstractController
         return $this->json(['user' => $user,], Response::HTTP_OK, [], ['groups' => ['user:read']]);
     }
 
-    #[Route('/user/all', name: '_list', methods: ['GET'])]
+    #[Route('/users/all', name: '_list', methods: ['GET'])]
     public function getAllUser(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $users = $this->userService->getUsers($user);
+        $users = $this->userService->getUsers($this->getUser());
         return $this->json(
             [
-                'user' => $user,
+                "results" => true,
+                "total" => count($users),
+                'users' => $users,
             ], Response::HTTP_OK, [], ['groups' => ['user:read']]
         );
     }

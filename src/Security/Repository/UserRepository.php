@@ -42,6 +42,17 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findUsersCreatedBy(int $adminId): array
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.createdBy', 'a')
+            ->where('a.id = :id')
+            ->setParameter('id', $adminId)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function loadUserByIdentifier(string $identifier): ?UserInterface
     {
         // TODO: Implement loadUserByIdentifier() method.
