@@ -9,22 +9,30 @@ security:
         property: email
   firewalls:
     login:
-      pattern: ^/api/login
+      pattern: ^/api/v1/login
       stateless: true
       json_login:
         check_path: api_login_check
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+    logout:
+      pattern: ^/api/v1/logout
     api:
       pattern: ^/api
       stateless: true
       jwt: ~
 
+  role_hierarchy:
+    ROLE_SUPER_ADMIN: ROLE_SUPER_ADMIN
+    ROLE_MANAGER:
+
   access_control:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
-    - { path: ^/api/v1/user/signIn, roles: PUBLIC_ACCESS }
+    - { path: ^/api/v1/user/admin/signIn, roles: PUBLIC_ACCESS }
     - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+    - { path: '^/admin/users', roles: ROLE_SUPER_ADMIN }
+    - { path: '^/admin', roles: ROLE_ADMIN }
 
 when@test:
   security:

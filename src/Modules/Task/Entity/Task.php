@@ -28,11 +28,11 @@ class Task
         $this->comments = new ArrayCollection();
     }
 
-    const statusOptions = ['todo', 'achieve', 'ok_prod','current'];
+    const statusOptions = ['todo', 'done', 'ok_prod','current','in_progress'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    #[Groups(["task:update", "project:read", "task:read"])]
     public ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -52,7 +52,7 @@ class Task
     #[ORM\Column(length: 255)]
     #[Assert\Choice(choices: Task::statusOptions, message: 'The value chosen is not valid')]
     #[Groups(["task:read", "task:write", "task:update", "project:read"])]
-    private ?string $status = null;
+    private ?string $status = "todo";
 
     #[ORM\ManyToOne(targetEntity: Project::class, cascade: ['persist'], inversedBy: 'task')]
     #[ORM\JoinColumn(name: 'project_id', nullable: false, onDelete: 'cascade')]
