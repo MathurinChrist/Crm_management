@@ -51,7 +51,7 @@ class CommentsController extends AbstractController
             'total' => count($allComments),
             'data' => $allComments,
             'error' => []
-        ], Response::HTTP_OK, [], ['groups' => ['comment:read']]);
+        ], Response::HTTP_OK, [], ['groups' => ['comment:read', 'user:read']]);
     }
 
     #[Route('/addCommentOnTask/{task}', name: '_add_comment_task', methods: ["POST"])]
@@ -64,6 +64,9 @@ class CommentsController extends AbstractController
             ['groups' => ['comment:read']]
         );
         $comment->setTask($task);
+        $comment->setCreatedBy($this->getUser());
+        $comment->setUpdatedBy($this->getUser());
+
         return $this->sameLogic($comment, 'create');
     }
 
