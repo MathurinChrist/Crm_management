@@ -35,7 +35,7 @@ class ProjectController extends AbstractController
             'total' => count($allProjects),
             'data' => $allProjects,
             'error' => []
-        ], Response::HTTP_OK, [], ['groups' => ["project:read", 'user:read']]);
+        ], Response::HTTP_OK, [], ['groups' => ['user:read', 'project:read']]);
     }
 
     #[Route('/create', name: '_create',methods: ["POST"])]
@@ -58,7 +58,7 @@ class ProjectController extends AbstractController
                 'result' => $result,
                 'data' => $project,
                 'errors' => $errors
-            ], $codeStatus, [], ['groups' => ['project:read', 'user:read']]);
+            ], $codeStatus, [], ['groups' => ['project:read']]);
     }
 
     #[Route('/{project}', name: 'update', methods: ["PUT", "PATCH"])]
@@ -69,11 +69,10 @@ class ProjectController extends AbstractController
         }
 
         $this->serializer->deserialize($request->getContent(), Project::class, 'json', [
-            'groups' => ["project:create"],
+            'groups' => ["project:update"],
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['tasksNumber'],
             AbstractNormalizer::OBJECT_TO_POPULATE => $project
         ]);
-
 
         $errors = $this->validator->validate($project);
         if(count($errors) ===0){

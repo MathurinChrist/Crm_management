@@ -3,6 +3,7 @@
 namespace App\Modules\Project\Repository;
 
 use App\Modules\Project\Entity\Project;
+use App\Security\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,15 @@ class ProjectRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Project::class);
+    }
+
+    public function getAllProjectsByUser(User $user): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.createdBy = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

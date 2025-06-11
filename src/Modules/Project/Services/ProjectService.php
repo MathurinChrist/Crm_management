@@ -27,7 +27,9 @@ class ProjectService
 
     public function getAllProjects(User $user): ?array
     {
-        return $this->projectRepository->findBy(['createdBy' => $user->getId()]);
+//        dd($this->projectRepository->getAllProjectsByUser($user));
+//        return $this->projectRepository->findBy(['createdBy' => $user->getId()]);
+        return $this->projectRepository->getAllProjectsByUser($user);
     }
 
     public function createProject(Project &$project, User $user): Project
@@ -38,7 +40,7 @@ class ProjectService
         return $project;
     }
 
-    public function updateProject(Project $project): Project
+    public function updateProject(Project &$project): Project
     {
         $this->entityManager->flush();
         return $project;
