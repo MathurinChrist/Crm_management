@@ -48,4 +48,8 @@ class UserService
         return $allUsers;
     }
 
+    public function getUserById (int $id) : ?User
+    {
+        return $this->userRepository->findOneBy(['id' => $id]);
+    }
 }
