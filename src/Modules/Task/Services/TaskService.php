@@ -3,6 +3,7 @@
 namespace App\Modules\Task\Services;
 
 use App\Helpers\HelperAction;
+use App\Modules\checkListTask\Entity\ChecklistItem;
 use App\Modules\Project\Events\TaskCreatedEvent;
 use App\Modules\Task\Entity\Task;
 use App\Modules\Task\Repository\TaskRepository;
@@ -43,12 +44,24 @@ class TaskService
         $this->entityManager->flush();
     }
 
-
-    public function updateTask(Task &$task, User $user): ?Task
+    public function updateTask(Task &$task, User $user, ?array $data): ?Task
     {
         HelperAction::SetCreateOrUpdateBy($task, $user);
+        if (!empty($data)) {
+           foreach ($task->getChecklist() as $existingItem) {
+               $task->removeChecklistItem($existingItem);
+           }
+        }
+        foreach ($data as $item) {
+            $check = new ChecklistItem();
+            $check->setText($item['text'] ?? '');
+            $check->setCompleted($item['completed'] ?? false);
+            $check->setTask($task);
+
+            $task->addChecklistItem($check);
+        }
+
         $this->entityManager->flush();
         return $task;
     }
-
 }

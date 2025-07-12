@@ -5,9 +5,11 @@ namespace App\Modules\Task\Entity;
 use App\Domain\Validators\checkTaskProperty;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\UserTrait;
+use App\Modules\checkListTask\Entity\ChecklistItem;
 use App\Modules\Project\Entity\Project;
 use App\Modules\Comments\Entity\Comment;
 use App\Modules\Task\Repository\TaskRepository;
+use App\Security\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,6 +28,8 @@ class Task
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->assignedUsers = new ArrayCollection();
+        $this->checklist = new ArrayCollection();
     }
 
     const statusOptions = ['todo', 'done', 'ok_prod','current','in_progress'];
@@ -59,11 +63,16 @@ class Task
     #[Groups(["task:read"])]
     private Project $project;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tasks', cascade: ['persist', 'remove'])]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    private Collection $assignedUsers;
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'task', cascade: ['persist', 'remove'])]
-    private Collection $comments;
     #[Groups(["task:read"])]
-    private Comment $comment;
+    private Collection $comments;
 
+    #[ORM\OneToMany(targetEntity: ChecklistItem::class, mappedBy: 'task', cascade: ['persist', 'remove'],  orphanRemoval: true)]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    private Collection $checklist;
     public function getId(): ?int
     {
         return $this->id;
@@ -101,6 +110,50 @@ class Task
         return $this;
     }
 
+    public function getAssignedUsers(): Collection
+    {
+        return $this->assignedUsers;
+    }
+
+    public function getChecklist(): Collection
+    {
+        return $this->checklist;
+    }
+
+    public function addAssignedUser(User $user): self
+    {
+        if (!$this->assignedUsers->contains($user)) {
+            $this->assignedUsers[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removeAssignedUser(User $user): self
+    {
+        if ($this->assignedUsers->removeElement($user)) {
+            $user->removeTask($this);
+        }
+
+        return $this;
+    }
+
+    public function addChecklistItem(ChecklistItem $item): void
+    {
+        if (!$this->checklist->contains($item)) {
+            $this->checklist->add($item);
+            $item->setTask($this);
+        }
+    }
+
+    public function removeChecklistItem(ChecklistItem $item): void
+    {
+        if ($this->checklist->removeElement($item)) {
+            if ($item->getTask() === $this) {
+                $item->setTask(null);
+            }
+        }
+    }
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -138,6 +191,4 @@ class Task
     {
         $this->comments->removeElement($comment);
     }
-
-
 }

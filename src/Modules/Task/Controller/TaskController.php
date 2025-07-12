@@ -7,8 +7,8 @@ use App\Modules\Project\Entity\Project;
 use App\Modules\Task\Entity\Task;
 use App\Modules\Task\Services\TaskService;
 use App\Security\Entity\User;
+use App\Security\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +26,8 @@ class TaskController extends AbstractController
         private readonly SerializerInterface $serializer,
         private readonly ValidatorInterface $validator,
         private readonly HelperAction $helperAction,
-        private readonly TranslatorInterface $translator
+        private readonly TranslatorInterface $translator,
+        private readonly UserService $userService
     ){}
 
     #[Route('/{project}/allTask', name: 'task_all', methods: ["GET"])]
@@ -83,21 +84,30 @@ class TaskController extends AbstractController
         $this->serializer->deserialize($request->getContent(), Task::class, 'json',
             [
                 'groups' => ["task:read", "task:write", "task:update"],
-                AbstractNormalizer::IGNORED_ATTRIBUTES => ['project'],
+                AbstractNormalizer::IGNORED_ATTRIBUTES => ['project', 'assignedUsers'],
                 AbstractNormalizer::OBJECT_TO_POPULATE => $task
             ]
         );
+
+       $data = json_decode($request->getContent(), true);
+        foreach (array_column($data['assignedUsers'], 'id') as $key => $userId) {
+            $user = $this->userService->getUserById($userId);
+            if (!$user) {
+                throw new \RuntimeException("User with ID $userId not found.");
+            }
+            $task->addAssignedUser($user);
+        }
         $result = false;
         $errors = $this->helperAction->handleErrors($this->validator->validate($task));
         if (count($errors) === 0) {
             $result = true;
-            $this->taskService->updateTask($task, $user);
+            $this->taskService->updateTask($task, $user, $data['checklist'] ?? []);
         }
         return $this->json([
             'result' => $result,
             'data' => $task,
             'error' => $errors
-        ], count($errors) === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST, [], ['groups' => ['task:read']]);
+        ], count($errors) === 0 ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST, [], ['groups' => ['task:read', 'user:read']]);
     }
 
     #[Route('/{project}/delete/{task}', name: 'task_delete', methods: ["DELETE"])]
