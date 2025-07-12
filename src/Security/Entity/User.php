@@ -3,7 +3,10 @@
 namespace App\Security\Entity;
 
 use App\Entity\Traits\UserTrait;
+use App\Modules\Task\Entity\Task;
 use App\Security\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -15,6 +18,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'user.allready_esist')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public function __construct()
+    {
+        $this->tasks = new ArrayCollection();
+    }
     use UserTrait;
     const GENDER = ['M', 'F', 'O'];
     #[ORM\Id]
@@ -47,6 +54,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 180)]
     private ?string $user_type = 'admin';
 
+    #[ORM\ManyToMany(targetEntity: Task::class, mappedBy: 'assignedUsers')]
+    private Collection $tasks;
+
     #[ORM\Column(type: 'json')]
     #[Groups(['user:read'])]
     private array $roles = [];
@@ -67,6 +77,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFirstName(): string
     {
         return $this->firstName;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): self
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks[] = $task;
+            $task->addAssignedUser($this);
+        }
+        return $this;
+    }
+
+    public function removeTask(Task $task): self
+    {
+        if ($this->tasks->removeElement($task)) {
+            $task->removeAssignedUser($this);
+        }
+        return $this;
     }
 
     public function setLastName(string $lastName): self
@@ -92,8 +127,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * The public representation of the user (e.g. a username, an email address, etc.)
-     *
      * @see UserInterface
      */
     public function getUserIdentifier(): string
