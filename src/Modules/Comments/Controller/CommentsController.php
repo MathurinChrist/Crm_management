@@ -24,10 +24,7 @@ class CommentsController extends AbstractController
         private readonly HelperAction       $helperAction,
         private readonly ValidatorInterface $validator
 
-    )
-    {
-
-    }
+    ){}
 
     #[Route('/all', name: '_all_comments_task', methods: ["GET"])]
     public function getAllComments(): Response
@@ -67,10 +64,10 @@ class CommentsController extends AbstractController
         $comment->setCreatedBy($this->getUser());
         $comment->setUpdatedBy($this->getUser());
 
-        return $this->sameLogic($comment, 'create');
+        return $this->mainResponse($comment, 'create');
     }
 
-    public function sameLogic(Comment $comment, string $action = 'create', ?array $groups = ['comment:read', 'user:read']): Response
+    public function mainResponse(Comment $comment, string $action = 'create', ?array $groups = ['comment:read', 'user:read']): Response
     {
         $errors = $this->validator->validate($comment);
         $errors = HelperAction::handleErrors($errors);
@@ -99,7 +96,7 @@ class CommentsController extends AbstractController
                 AbstractNormalizer::OBJECT_TO_POPULATE => $comment
             ]
         );
-        return $this->sameLogic($comment, 'update');
+        return $this->mainResponse($comment, 'update');
     }
 
     #[Route('/delete/{comment}', name: '_delete_comment_task', methods: ["DELETE"])]
