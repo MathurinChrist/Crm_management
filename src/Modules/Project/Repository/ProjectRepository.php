@@ -21,7 +21,7 @@ class ProjectRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.createdBy = :user')
-            ->setParameter('user', $user)
+            ->setParameter('user', $user->getCreatedBy() ?? $user)
             ->getQuery()
             ->getResult();
     }
