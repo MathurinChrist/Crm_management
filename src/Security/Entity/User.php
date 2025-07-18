@@ -27,19 +27,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'assign:user'])]
     private int $id;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'assign:user'])]
     private string $lastName;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'assign:user'])]
     private string $firstName;
 
     #[Assert\Choice(choices: self::GENDER, message: 'Option does not respect needs of project')]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'assign:user'])]
     private string $gender = 'M';
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: "user.not_valid_email",
         mode: "strict"
     )]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'assign:user'])]
     private ?string $email;
 
     #[Groups(['user:read'])]

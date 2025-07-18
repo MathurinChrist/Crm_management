@@ -33,6 +33,7 @@ class Task
     }
 
     const statusOptions = ['todo', 'done', 'ok_prod','current','in_progress'];
+    const priorityOptions = ['low', 'meduim', 'high', 'critical'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -64,7 +65,7 @@ class Task
     private Project $project;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tasks', cascade: ['persist', 'remove'])]
-    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    #[Groups(["task:read", "task:write", "task:update", "project:read", "assign:user"])]
     private Collection $assignedUsers;
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'task', cascade: ['persist', 'remove'])]
     #[Groups(["task:read"])]
@@ -73,6 +74,11 @@ class Task
     #[ORM\OneToMany(targetEntity: ChecklistItem::class, mappedBy: 'task', cascade: ['persist', 'remove'],  orphanRemoval: true)]
     #[Groups(["task:read", "task:write", "task:update", "project:read"])]
     private Collection $checklist;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Choice(choices: Task::priorityOptions, message: 'The value chosen is not valid')]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    private ?string $priorityOptions = "meduim";
     public function getId(): ?int
     {
         return $this->id;
@@ -102,11 +108,20 @@ class Task
     {
         return $this->description;
     }
+    public function getPriorityOptions(): ?string
+    {
+        return $this->priorityOptions;
+    }
 
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+        return $this;
+    }
 
+    public function setPriorityOptions (String $taskPriority): self
+    {
+        $this->priorityOptions = $taskPriority;
         return $this;
     }
 

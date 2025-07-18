@@ -40,7 +40,7 @@ class TaskController extends AbstractController
             [
                 'total' => count($this->taskService->getAllTask($project->getId())),
                 'tasks' => $this->taskService->getAllTask($project->getId()),
-            ], Response::HTTP_OK, [], ['groups' => ['task:read', 'user:read']]
+            ], Response::HTTP_OK, [], ['groups' => ['task:read', 'assign:user']]
         );
     }
 
