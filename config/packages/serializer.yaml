@@ -1,0 +1,6 @@
+# config/packages/serializer.yaml (to avoid a circular for userTrait in some entities)
+framework:
+    serializer:
+        default_context:
+            enable_max_depth: true
+            circular_reference_handler: 'App\Serializer\CircularReferenceHandler::handle'
