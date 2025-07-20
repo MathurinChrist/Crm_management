@@ -1,0 +1,23 @@
+knpu_oauth2_client:
+  clients:
+    azure:
+      type: generic
+      client_id: '%env(OAUTH_AZURE_CLIENT_ID)%'
+      client_secret: '%env(OAUTH_AZURE_CLIENT_SECRET)%'
+#      redirect_route: 'http://localhost:8081/#/auth/callback'
+      redirect_route: 'auth_callback'
+      redirect_params: { provider: azure }
+      provider_class: TheNetworg\OAuth2\Client\Provider\Azure
+      provider_options:
+        urlAuthorize: 'https://login.microsoftonline.com/%env(OAUTH_AZURE_TENANT_ID)%/oauth2/v2.0/authorize'
+        urlAccessToken: 'https://login.microsoftonline.com/%env(OAUTH_AZURE_TENANT_ID)%/oauth2/v2.0/token'
+        urlResourceOwnerDetails: 'https://graph.microsoft.com/v1.0/me'
+        scopes: ['User.Read']
+        pkceMethod: 'S256' #
+
+    google:
+      type: google
+      client_id: '%env(OAUTH_GOOGLE_CLIENT_ID)%'
+      client_secret: '%env(OAUTH_GOOGLE_CLIENT_SECRET)%'
+      redirect_route: 'auth_callback'
+      redirect_params: { provider: google }

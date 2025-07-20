@@ -1,0 +1,4 @@
+sso_module_annotations:
+  resource: ../../src/Modules/Sso/Controller/
+  type: attribute
+  prefix: '/api/v1'

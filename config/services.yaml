@@ -19,6 +19,15 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\Modules\Sso\Provider\AzureProvider:
+        tags: [ 'app.sso_provider' ]
+
+    App\Modules\Sso\Provider\GoogleProvider:
+        tags: [ 'app.sso_provider' ]
+
+    App\Modules\Sso\Provider\SsoProviderManager:
+        arguments:
+            $providers: !tagged_iterator app.sso_provider
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
