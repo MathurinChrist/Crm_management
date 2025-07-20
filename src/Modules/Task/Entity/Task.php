@@ -64,7 +64,7 @@ class Task
     private Project $project;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tasks', cascade: ['persist', 'remove'])]
-    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    #[Groups(["task:read", "task:write", "task:update"])]
     private Collection $assignedUsers;
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'task', cascade: ['persist', 'remove'])]
     #[Groups(["task:read"])]

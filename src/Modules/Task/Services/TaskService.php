@@ -24,6 +24,12 @@ class TaskService
         return $this->taskRepository->findBy(['project' => $projectId]);
     }
 
+    public function getProjectsTasks (User $user): ?array
+    {
+        $createdBy = $user->getCreatedBy() !== null ? $user->getCreatedBy() : $user;
+        return $this->taskRepository->findBy(['createdBy' => $createdBy->getId()]);
+    }
+
     public function getTaskById(int $id): ?Task
     {
         return $this->taskRepository->find($id);

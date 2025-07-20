@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -42,6 +43,26 @@ class TaskController extends AbstractController
                 'tasks' => $this->taskService->getAllTask($project->getId()),
             ], Response::HTTP_OK, [], ['groups' => ['task:read', 'user:read']]
         );
+    }
+
+    #[Route('/allTask', name: 'tasks_all', methods: ["GET"])]
+    public function getProjectsTasks(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$user) {
+            throw new AuthenticationException('yous must connect before doing this action');
+        }
+
+        $data = $this->taskService->getProjectsTasks($user);
+
+        return $this->json(
+            [
+                'total' => count($data),
+                'tasks' => $data,
+            ], Response::HTTP_OK, [], ['groups' => ['task:read', 'user:read']]
+        );
+
     }
 
     #[Route('/{project}/create', name: 'task_create', methods: ["POST"])]
