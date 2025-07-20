@@ -8,11 +8,7 @@ class CircularReferenceHandler
     {
         if (method_exists($object, 'getId')) {
             return [
-                'id' => $object->getId(),
-                'lastName' => $object->getLastName(),
-                'firstName' => $object->getFirstName(),
-                'gender' => $object->getGender(),
-                'email' => $object->getEmail()
+                'id' => $object->getId()
             ];
         }
 
