@@ -105,7 +105,7 @@ class TaskController extends AbstractController
         $this->serializer->deserialize($request->getContent(), Task::class, 'json',
             [
                 'groups' => ["task:read", "task:write", "task:update"],
-                AbstractNormalizer::IGNORED_ATTRIBUTES => ['project', 'assignedUsers'],
+                AbstractNormalizer::IGNORED_ATTRIBUTES => ['project', 'assignedUsers','comments'],
                 AbstractNormalizer::OBJECT_TO_POPULATE => $task
             ]
         );

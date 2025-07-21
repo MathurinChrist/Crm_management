@@ -33,6 +33,7 @@ class Task
     }
 
     const statusOptions = ['todo', 'done', 'ok_prod','current','in_progress'];
+    const priorityOptions = ['meduim', 'high', 'low', 'critical'];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -57,6 +58,11 @@ class Task
     #[Assert\Choice(choices: Task::statusOptions, message: 'The value chosen is not valid')]
     #[Groups(["task:read", "task:write", "task:update", "project:read"])]
     private ?string $status = "todo";
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Choice(choices: Task::priorityOptions, message: 'The value chosen is not valid')]
+    #[Groups(["task:read", "task:write", "task:update", "project:read"])]
+    private ?string $priorityOptions = "meduim";
 
     #[ORM\ManyToOne(targetEntity: Project::class, cascade: ['persist'], inversedBy: 'task')]
     #[ORM\JoinColumn(name: 'project_id', nullable: false, onDelete: 'cascade')]
@@ -120,6 +126,11 @@ class Task
         return $this->checklist;
     }
 
+    public function getPriorityOptions(): string
+    {
+        return $this->priorityOptions;
+    }
+
     public function addAssignedUser(User $user): self
     {
         if (!$this->assignedUsers->contains($user)) {
@@ -169,6 +180,11 @@ class Task
     public function setStatus(string $status): static
     {
         $this->status = $status;
+        return $this;
+    }
+    public function setPriorityOptions(string $priorityOptions): static
+    {
+        $this->priorityOptions = $priorityOptions;
         return $this;
     }
 
