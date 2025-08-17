@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -25,6 +26,35 @@ class UserController extends AbstractController
         private readonly ValidatorInterface $validator
     ){
 
+    }
+    #[Route('/updateProfile/{user}', name: 'updat_user_profile', methods: ["POST"])]
+    public function updateUserProfile(Request $request, ?User $user): ?Response
+    {
+        if ($user->getId() === null) {
+            return $this->helperAction->jsonNotFoundOrError($this->translator->trans('project_module.not_found'));
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        $this->serializer->deserialize($request->getContent(), User::class, 'json',
+            [
+                'groups' => ['user:read', 'user:update'],
+                AbstractNormalizer::IGNORED_ATTRIBUTES => ['email', 'user_type', 'roles'],
+                AbstractNormalizer::OBJECT_TO_POPULATE => $user
+            ]
+        );
+
+        $result = false;
+        $errors = $this->helperAction->handleErrors($this->validator->validate($user));
+        if (count($errors) === 0) {
+            $result = true;
+            $this->userService->updateUser($user);
+        }
+
+        return $this->json([
+            'result' => $result,
+            'data' => $user,
+            'error' => $errors
+        ], $result ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST, [], ['groups' => ['user:read']]);
     }
 
     #[Route('/admin/signIn', name: 'registered', methods: ["POST"])]

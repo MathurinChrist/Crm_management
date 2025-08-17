@@ -3,6 +3,7 @@
 namespace App\Security\Service;
 
 use App\Security\Entity\User;
+use App\Security\Event\OnUserChangePassword;
 use App\Security\Event\OnUserCreatedEvent;
 use App\Security\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,7 +14,7 @@ class UserService
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ){
     }
 
@@ -41,6 +42,9 @@ class UserService
         /** @var User $user */
         $id_admin = $user->getCreatedBy() === null ? $user->getId() : $user->getCreatedBy()->getId();
         $allUsers = $this->userRepository->findUsersCreatedBy($id_admin) ?? [];
+        if ($user->getCreatedBy() !== null) {
+            $allUsers[] = $user->getCreatedBy();
+        }
 
         if ($user->getCreatedBy() === null) {
             $allUsers[] = $user;
@@ -51,5 +55,10 @@ class UserService
     public function getUserById (int $id) : ?User
     {
         return $this->userRepository->findOneBy(['id' => $id]);
+    }
+
+    public function senMessage (User $user, String $link ): void {
+       $this->eventDispatcher->dispatch(new OnUserChangePassword($user,$link ));
+
     }
 }
