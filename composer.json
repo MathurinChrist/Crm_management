@@ -36,6 +36,7 @@
         "thenetworg/oauth2-azure": "^2.2"
     },
     "require-dev": {
+        "phpunit/phpunit": "^11.5",
         "symfony/maker-bundle": "^1.61",
         "symfony/stopwatch": "7.1.*",
         "symfony/web-profiler-bundle": "7.1.*"
