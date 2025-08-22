@@ -41,6 +41,11 @@ class ProjectController extends AbstractController
     #[Route('/create', name: '_create',methods: ["POST"])]
     public function createProject(Request $request): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            return $this->json(
+                ['message' => 'Vous n’avez pas les droits pour effectuer cette action.'],
+                Response::HTTP_FORBIDDEN);
+        }
         /** @var User $user */
         $user = $this->getUser();
         $result = false;
@@ -64,6 +69,12 @@ class ProjectController extends AbstractController
     #[Route('/{project}', name: 'update', methods: ["PUT", "PATCH"])]
     public function updateProject(Request $request, ?Project $project): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            return $this->json(
+                ['message' => 'Vous n’avez pas les droits pour effectuer cette action.'],
+                Response::HTTP_FORBIDDEN);
+        }
+
         if ($project === null) {
             return $this->helperAction->jsonNotFoundOrError('project_module.not_found');
         }
@@ -89,6 +100,11 @@ class ProjectController extends AbstractController
     #[Route('/delete/{id}', name: '_delete', methods: ["DELETE"])]
     public function deleteProject(int $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            return $this->json(
+                ['message' => 'Vous n’avez pas les droits pour effectuer cette action.'],
+                Response::HTTP_FORBIDDEN);
+        }
         $project = $this->projectService->getProjectById($id);
         if ($project === null) {
             return $this->helperAction->JsonNotFoundOrError('project_module.not_found');

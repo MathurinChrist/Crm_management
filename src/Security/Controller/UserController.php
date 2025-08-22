@@ -61,7 +61,7 @@ class UserController extends AbstractController
     public function userRegistered(Request $request): ?Response
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
-        $user->setRoles(['ROLE_SUPER_ADMIN']);
+        $user->setRoles(['ROLE_SUPER_ADMIN', 'USER']);
         $plaintextPassword = substr(str_shuffle(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 0, 16);
         $hashedPassword = $this->passwordHasher->hashPassword(
