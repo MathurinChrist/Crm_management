@@ -87,9 +87,9 @@ class Project
     {
         if ($this->task->contains($task)) {
             $this->task->removeElement($task);
-            if ($task->getProject() === $this) {
-                $task->setProject(null);
-            }
+//            if ($task->getProject() === $this) {
+//                $task->setProject(null);
+//            }
         }
     }
 

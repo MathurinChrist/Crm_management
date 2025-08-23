@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\tests;
 
 use App\Modules\Task\Entity\Task;
 use App\Modules\Project\Entity\Project;
@@ -41,7 +41,8 @@ class TaskTest extends TestCase
     {
         $task = new Task();
         $item = new ChecklistItem();
-        $item->setTitle("Check DB");
+        $item->setText('first text');
+        $item->setCompleted(true);
 
         $task->addChecklistItem($item);
 
