@@ -41,6 +41,9 @@ class Project
     #[Groups(["project:read"])]
     private ?int $tasksNumber = 0;
 
+    #[Groups(["project:read"])]
+    private ?int $completedTask = 0;
+
     #[ORM\Column(length: 255)]
     #[Groups(["project:read", "project:create", "project:update"])]
     #[Assert\Choice(choices: Project::statusOptions, message: 'The value chosen is not valid')]
@@ -110,6 +113,16 @@ class Project
     public function getTasksNumber(): ?int
     {
         return $this->task->count();
+    }
+
+    public function getCompletedTask(): ?int
+    {
+        $total = $this->task->filter(function ($task) {
+            return $task->getStatus() === 'done';
+        })->count();
+
+        $this->completedTask = $total;
+        return $this->completedTask;
     }
 
     public function setStatus(string $status): void
