@@ -20,15 +20,9 @@ class HelperAction  extends AbstractController
 
     public static function getEnvVar(string $key): string|bool
     {
-        //todo: must refacto this by using ParameterBagInterface
+        //todo: must  refacto this by using parameterInterface
         $value = $_ENV[$key] ?? getenv($key);
-        if ($value === 'true') {
-            $value = true;
-        }
-        if ($value === 'false') {
-            $value = false;
-        }
-        return $value;
+        return $value === false ? false : $value;
     }
     public static function handleErrors(ConstraintViolationList $violations): ?array
     {
