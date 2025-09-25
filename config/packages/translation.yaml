@@ -4,6 +4,8 @@ framework:
     default_path: '%kernel.project_dir%/translations'
     paths:
       - '%kernel.project_dir%/src/Modules/Project/translations'
+      - '%kernel.project_dir%/src/Modules/Task/translations'
+      - '%kernel.project_dir%/src/Modules/User/translations'
       - '%kernel.project_dir%/src/Security/translations/'
     fallbacks:
       - fr
