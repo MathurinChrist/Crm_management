@@ -49,6 +49,9 @@ jobs:
       - name: Install Dependencies
         run: composer install --ignore-platform-reqs -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+      - name: Ensure PHPStan is installed
+        run: composer require --dev phpstan/phpstan --no-interaction --no-progress
+
       - name: Clear cache
         run: php bin/console cache:clear --env=test
 
@@ -59,14 +62,14 @@ jobs:
           mysql -h 127.0.0.1 -P 3306 -u root -e "DROP DATABASE IF EXISTS test_db;"
           mysql -h 127.0.0.1 -P 3306 -u root -e "CREATE DATABASE test_db;"
 
-#      - name: Run migrations
-#        env:
-#          DATABASE_URL: mysql://root:root@127.0.0.1:3306/test_db
-#        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
+      #      - name: Run migrations
+      #        env:
+      #          DATABASE_URL: mysql://root:root@127.0.0.1:3306/test_db
+      #        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
       - name: Run PHPUnit tests
-#        env:
-#          DATABASE_URL: mysql://root:root@127.0.0.1:3306/test_db
+        #        env:
+        #          DATABASE_URL: mysql://root:root@127.0.0.1:3306/test_db
         run: vendor/bin/phpunit --testdox
 
       - name: Run PHPStan
