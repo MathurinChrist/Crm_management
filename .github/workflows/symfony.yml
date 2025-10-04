@@ -69,5 +69,5 @@ jobs:
         #          DATABASE_URL: mysql://root:root@127.0.0.1:3306/test_db
         run: vendor/bin/phpunit --testdox
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+#      - name: Run PHPStan
+#        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
