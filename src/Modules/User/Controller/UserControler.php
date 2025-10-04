@@ -30,7 +30,7 @@ class UserControler extends AbstractController
             [
                 "results" => true,
                 "total" => count($users),
-                'users' => $users,
+                'allUsers' => $users,
             ], Response::HTTP_OK, [], ['groups' => ['user:read']]
         );
     }
